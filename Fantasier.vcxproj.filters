@@ -24,9 +24,6 @@
     <ClCompile Include="src\Components\Mesh.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Geometry\Matrix.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\Renderer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -86,7 +83,7 @@
     <ClInclude Include="src\Components\GameObject.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Components\Transfrom.hpp">
+    <ClInclude Include="src\Components\Transform.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

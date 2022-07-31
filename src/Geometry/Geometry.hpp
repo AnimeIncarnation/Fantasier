@@ -2,7 +2,6 @@
 #ifndef __GEOMETRY_HPP__
 #define __GEOMETRY_HPP__
 
-#include "Vector.hpp"
 #include "Matrix.hpp"
 
 

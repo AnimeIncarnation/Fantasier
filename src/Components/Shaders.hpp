@@ -7,6 +7,7 @@
 #include "Texture.hpp"
 #include "Camera.hpp"
 #include "Vertex.hpp"
+#include "Mesh.hpp"
 
 struct v2f
 {
@@ -26,7 +27,7 @@ public:
 	Shader() {}
 	Shader(const v2f& res) {}
 	Shader(const Shader& s){}
-	virtual void  VS(const Vec4f& v) { std::cout << "Default Shader(Deleted)" << std::endl; __debugbreak(); }
+	virtual void  VS(Vec4f& v,const Transform& t ,const Camera& c) { std::cout << "Default Shader(Deleted)" << std::endl; __debugbreak(); }
 	virtual Color FS(const v2f& f) { std::cout << "Default Shader(Deleted)" << std::endl;__debugbreak(); return Color(); }
 	void CVVCulling()
 	{
@@ -53,9 +54,9 @@ public:
 		//std::cout<<"屏幕映射结束 "<<__FILE__ << " : " << __LINE__ << std::endl;
 	}
 
-	void VertexShader(Shader&& shader, const Vec4f& v)
+	void VertexShader(Shader&& shader, Vec4f& v, const Transform& t, const Camera& c)
 	{
-		shader.VS(v);
+		shader.VS(v,t,c);
 	}
 	Color FragmentShader(Shader&& shader, const v2f& f)
 	{
@@ -66,7 +67,7 @@ public:
 class FlatShader : public Shader
 {
 public:
-	void VS(const Vec4f& v) override
+	void VS(Vec4f& v, const Transform& t, const Camera& c) override
 	{
 		//MVP变换
 
@@ -81,7 +82,7 @@ public:
 class GouraudShader :public Shader
 {
 public:
-	void VS(const Vec4f& v) override
+	void VS(Vec4f& v, const Transform& t, const Camera& c) override
 	{
 		//std::cout << "GouraudShader" << __FILE__ << " : " << __LINE__ << std::endl;
 	}
@@ -94,9 +95,13 @@ public:
 class PhongShader :public Shader
 {
 public:
-	void VS(const Vec4f& v) override
+	void VS(Vec4f& v, const Transform& go_t, const Camera& c) override
 	{
 		//std::cout << "PhongShader" << __FILE__ << " : " << __LINE__ << std::endl;
+		
+		//MV变换
+		v = go_t.LocalToWorld() * v;		  //目前效果等于无
+		v = c.viewMatrix * v;				  //目前hack了一下
 	}
 	Color FS(const v2f& f) override
 	{
@@ -112,7 +117,7 @@ public:
 class PBRShader :public Shader
 {
 public:
-	void VS(const Vec4f& v) override
+	void VS(Vec4f& v, const Transform& t, const Camera& c) override
 	{
 
 

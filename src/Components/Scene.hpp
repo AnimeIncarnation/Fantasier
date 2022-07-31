@@ -12,7 +12,10 @@ private:
 	std::vector<Camera> cameras;
 
 public:
-	Scene(const Camera& mainCamera) { cameras.push_back(mainCamera); }
+	Scene(const Camera& mainCamera) 
+	{ 
+		cameras.push_back(mainCamera); 
+	}
 
 
 	Camera& GetMainCamera()

@@ -5,14 +5,19 @@
 
 #include "Material.hpp"
 #include "Mesh.hpp"
+#include "Transform.hpp"
 
 class GameObject
 {
 public:
+	Transform transform;
 	Material material;
 	std::vector<Mesh> mesh;
-	GameObject() { };
-	GameObject(const Material& ma,const std::vector<Mesh>& me):material(ma),mesh(me) {  };
+	GameObject():transform(Point()) { };
+	GameObject(const Material& ma,const std::vector<Mesh>& me):transform(Point()),material(ma),mesh(me) {  };
+	GameObject(const Transform& t,
+			   const Material& ma,const std::vector<Mesh>& me)
+		:transform(t),material(ma),mesh(me) {  };
 };
 
 

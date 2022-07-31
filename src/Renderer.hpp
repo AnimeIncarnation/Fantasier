@@ -14,10 +14,10 @@
 class Renderer
 {
 private:
-	Renderer() {}
+	Renderer() = default;
 	~Renderer();
-public:
 	static Renderer* instance;
+public:
 	static Renderer* GetInstance() 
 	{
 		if (instance == nullptr) 
@@ -39,7 +39,7 @@ public:
 	void PostProecssing();
 	void Rasterization(GameObject& mesh, int indice);
 	void RenderScene();
-
+	void Deleter();
 };
 
 

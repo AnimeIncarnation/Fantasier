@@ -8,9 +8,8 @@
 
 
 /*2022.7.18备注：
-*	1. 以初始化列表为参数的构造器 ClassName(const std::initializer_list<T>& list)........必须在头文件中书写实现，且不用写inline。若分文件编写则报链接错误。
-*	2. 带模板的operator必须在头文件中书写实现，且不用写inline。若分文件编写则报链接错误。
-*	3. 类的operator[]一般是一定要重载一份const和一份无const
+*	1. 因为调用时才会创建函数，带模板的成员函数必须在头文件中书写实现，且不用写inline。若分文件编写则调用时报链接错误。
+*	2. 类的operator[]一般是一定要重载一份const和一份无const。
 */
 
 
@@ -27,9 +26,8 @@ private:
 
 
 public:
-	Matrix():raw(N) {};
+	Matrix():raw(N) {}
 	Matrix(const std::initializer_list<T>& list);
-	Matrix(const Matrix<T,N,M>& m):raw(m.raw){};
 
 	Matrix<T,N,M> operator+ (const Matrix<T,N,M>& m) const ;
 	Matrix<T,N,M> operator- (const Matrix<T,N,M>& m) const ;
@@ -41,7 +39,6 @@ public:
 	Matrix<T,N,M> inverse()const ;
 	unsigned int GetRows() const { return rows; }
 	unsigned int GetColumns() const { return columns; }
-
 };		
 
 typedef Matrix<int,   2,2> Matrix2i;
@@ -52,9 +49,8 @@ typedef Matrix<int,   4,4> Matrix4i;
 typedef Matrix<float, 4,4> Matrix4f;
 
 
-
 template<class T, int N, int M>
-Matrix<T,N,M>::Matrix(const std::initializer_list<T>& list) :raw(N)
+Matrix<T, N, M>::Matrix(const std::initializer_list<T>& list) :raw(N)
 {
 	int count = 0;
 	for (auto arg : list)
@@ -68,6 +64,8 @@ Matrix<T,N,M>::Matrix(const std::initializer_list<T>& list) :raw(N)
 		++count;
 	}
 }
+
+
 
 template<class T, int N, int M>
 Matrix<T, N, M> Matrix<T, N, M>::operator+(const Matrix<T, N, M>& m)	const 
@@ -171,6 +169,26 @@ std::ostream& operator<<(std::ostream& s, const  Matrix<T, N,M>& m)
 	return s;
 }
 
+
+template<class T, int N, int M>
+Matrix<T, N, M> Matrix<T, N, M>::transpose()	 const
+{
+	Matrix<T, N, M> mat;
+	for (int i = 0;i < N;++i)
+	{
+		for (int j = 0;j < M;++j)
+		{
+			mat[i][j] = raw[j][i];
+		}
+	}
+	return mat;
+}
+
+template<class T, int N, int M>
+Matrix<T, N, M> Matrix<T, N, M>::inverse()const
+{
+	return Matrix<T, N, M>();
+}
 
 
 

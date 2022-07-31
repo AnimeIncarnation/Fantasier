@@ -153,7 +153,6 @@
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Components\Texture.cpp" />
-    <ClCompile Include="src\Geometry\Matrix.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Components\Mesh.cpp" />
     <ClCompile Include="src\Output\tgaimage.cpp" />
@@ -165,7 +164,7 @@
     <ClInclude Include="src\Components\GameObject.hpp" />
     <ClInclude Include="src\Components\Material.hpp" />
     <ClInclude Include="src\Components\Scene.hpp" />
-    <ClInclude Include="src\Components\Transfrom.hpp" />
+    <ClInclude Include="src\Components\Transform.hpp" />
     <ClInclude Include="src\Geometry\Geometry.hpp" />
     <ClInclude Include="src\Geometry\Matrix.hpp" />
     <ClInclude Include="src\Geometry\Vector.hpp" />

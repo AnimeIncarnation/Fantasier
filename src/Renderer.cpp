@@ -30,18 +30,28 @@ void Renderer::Rasterization(GameObject& gameObject, int ind)
 			Vec3f barycentricCoord = Barycentric(triangle,screenCoord);
 			if (barycentricCoord.x < 0 || barycentricCoord.y < 0 || barycentricCoord.z < 0)	continue;
 			
+			//透视矫正插值：根据屏幕空间的重心坐标和三维坐标的z值获得。注意此处的z值不会趋于零
+			float alpha = barycentricCoord[0] / triangle[0].z;
+			float beta = barycentricCoord[1] / triangle[1].z;
+			float gamma = barycentricCoord[2] / triangle[2].z;
+			Vec3f bcChanged(alpha, beta, gamma);
+
 			//根据获得v2f，重心坐标计算z和uv和法线插值
 			v2f transfer;
 			transfer.cameraDir = scenes[0].GetMainCamera().dir;
 			transfer.tex = &gameObject.material.textures;
 			for (int i = 0;i < 3;i++)
 			{
-				transfer.z += barycentricCoord[i] * triangle[i].z;
+				transfer.z += bcChanged[i] * triangle[i].z;
 				Vec2f texcoords = gameObject.mesh.at(0).GetTexcoords(texInds[i]);
-				transfer.uv += texcoords * barycentricCoord[i];
+				transfer.uv += texcoords * bcChanged[i];
 				Vec4f normals = gameObject.mesh.at(0).GetNorms(normInds[i]);
-				transfer.normal +=  normals * barycentricCoord[i];
+				transfer.normal +=  normals * bcChanged[i];
 			}
+			transfer.z = transfer.z * (1.f/(alpha + beta + gamma));
+			transfer.uv = transfer.uv * (1.f/(alpha + beta + gamma));
+			transfer.normal = transfer.normal * (1.f/(alpha + beta + gamma));
+
 			//深度测试
 			if (transfer.z > (*zbuf)[x][y])
 			{
@@ -76,7 +86,7 @@ void Renderer::RenderScene()
 					Vec4f& vertPos  = gameObject.mesh.at(0).GetVerts(i);
 
 					//顶点着色器：变换到裁剪空间
-					gameObject.material.shader.VertexShader(PhongShader(),vertPos);	  
+					gameObject.material.shader.VertexShader(PhongShader(),vertPos, gameObject.transform,presentScene.GetMainCamera());
 
 					//裁剪：裁剪+剔除
 					gameObject.material.shader.CVVCulling();
@@ -148,7 +158,7 @@ void Renderer::InitializeScene(const std::string& description)
 {
 	if (description == "default")
 	{
-		Scene s{ Camera() };
+		Scene s{ Camera(Point(0,0,3)) };
 		std::vector<std::string> meshSrc(1, "models/african_head.obj");
 		std::vector<std::string> textureSrc(1, "models/african_head_diffuse.tga");
 		s.PushGO(LoadGO(meshSrc,textureSrc));
@@ -172,10 +182,15 @@ void Renderer::InitializeBuffer()
 
 Renderer::~Renderer()
 {
+	delete zbuf;
+	delete dbuf;
+}
+
+void Renderer::Deleter()
+{
 	if (instance != nullptr)
 	{
 		delete instance;
-		delete[] zbuf;
-		delete[] dbuf;
+		instance = nullptr;
 	}
 }
